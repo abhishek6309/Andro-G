@@ -39,3 +39,88 @@ Download apk file from https://github.com/satishpatnayak/MyTest/blob/master/Andr
 
 Feedbank and Ideas are welcome. Please reach me satishkumarpatnayak@live.com </br>
 Follow me on Twiiter for update on blogs, changes...etc https://twitter.com/satish_patnayak
+
+ # Performing Static ApplicationSecurity Testing Using SonarQube on AndroGoat:
+
+Download DVWA source code from https://github.com/satishpatnayak/AndroGoat
+
+Open SonarQube Click on create project and add an project name like " AndroGoa Source code review "
+
+Go to With the configuration best suited for you in this we will go manually with GitHub Actions
+
+we have to Create GitHub Secrets in our repository containing Vulnerable web application source code
+
+Create a " sonar-project.properties " file in your repository and paste the content mentioned in below :
+sonar.projectKey=Andro-Goat-Source-code-review
+
+Create or update your .github/workflows/build.ymland paste the content mentioned :
+
+ name: Build on:
+ push:
+   branches:
+     - master # or the name of your main branch
+jobs
+ build:
+   name: Build
+   runs-on: ubuntu-latest
+   steps:
+     - uses: actions/checkout@v2
+       with:
+         fetch-depth: 0
+     - uses: sonarsource/sonarqube-scan-action@master
+       env:
+         SONAR_TOKEN: $Template:Secrets.SONAR TOKEN
+         SONAR_HOST_URL: $Template:Secrets.SONAR HOST URL
+     # If you wish to fail your job when the Quality Gate is red, uncomment the
+     # following lines. This would typically be used to fail a deployment.
+     # - uses: sonarsource/sonarqube-quality-gate-action@master
+     #   timeout-minutes: 5
+     #   env:
+     #     SONAR_TOKEN: $Template:Secrets.SONAR TOKEN
+
+Commit and push your code to start the analysis. Each new push you make on your main branch will trigger a new analysis in SonarQube
+
+# Observations:
+
+SonarQube will give you detailed analysis report within 5 minutes which will help you to improve your code quality
+
+The results of analysis will be as following:
+
+- 1 Bugs
+- 2 Vulnerabilities
+- 52 Code Smells
+- 0.0 % Duplications
+You can then see the details of bugs , vulnerabilities, code smells , etc. found by clicking on then
+
+it will also shows suggestion about how you can improve your code and mitigate the bugs
+
+ex:
+
+  android:name=".InsecureStorageTempActivity"
+44				
+            android:label="@string/tempFile" />
+45				
+        <activity
+46				
+            android:name=".AccessControlIssue1Activity"
+47				
+            android:label="@string/activity" />
+48				
+        <activity
+Implement permissions on this exported component.
+
+49				
+            android:name=".AccessControl1ViewActivity"
+50				
+            android:label="@string/activity">
+51				
+            <intent-filter>
+52				
+                <action android:name="android.intent.action.VIEW" />
+53				
+                <category android:name="android.intent.category.DEFAULT" />
+54				
+                
+57				
+            </intent-filter>
+
